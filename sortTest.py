@@ -1,7 +1,7 @@
 import csv
 from encodings import utf_8
-line_number1 = 1
-line_number2 = 7
+line_number1 = 3
+line_number2 = 9
 i = 0
 #   For å skrive flere kolonner til CSV-filen må man legge til en ny line_number variabel med tilsvarende index fra avinor loggen og legge den til text-variabelen
 #   på samme måte som de andre variablene.
