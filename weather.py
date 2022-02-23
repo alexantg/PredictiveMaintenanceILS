@@ -1,11 +1,11 @@
 import urllib.request as urllib2
 
-airport = "ENGM"
+airport = "ENBO"
 url = ""
 
 #YYYYMMDDHHMMSS
-start = "20220201000000"
-end = "20220202000000"
+start = "20220223000000"
+end = "20220224000000"
 
 fname = ""
 filename = fname.join([airport,start]) 
