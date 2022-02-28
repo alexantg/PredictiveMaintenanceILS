@@ -33,7 +33,7 @@ with open("logTestClean.csv", 'rt', encoding="utf_8") as f:
         value = mycsv[i][line_number1]
         num = float(value.replace(",", "."))
         raw_seq.append(num)
-        if len(raw_seq) == 2484:
+        if len(raw_seq) == 2486: # velg hvor i loggen den skal slutte, slik at man kan sammenligne faktisk data med prediksjon
             break
         i = i + 1
 
@@ -53,7 +53,7 @@ model.compile(optimizer='adam', loss='mse')
 # fit model
 model.fit(X, y, epochs=200, verbose=0)
 # demonstrate prediction
-x_input = array([2.79, 2.44, 2.19])
+x_input = array([1.16, 1.16, 0.47]) # de 3 siste verdiene fra "raw_seq". Sjekk loggen for å finne de
 x_input = x_input.reshape((1, n_steps, n_features))
 yhat = model.predict(x_input, verbose=0)
 print(yhat)
