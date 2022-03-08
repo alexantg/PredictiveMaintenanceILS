@@ -10,3 +10,7 @@ with open('output.csv', 'w') as out:
             out.write(line)
 
 
+#drop empty columns
+data = pd.read_csv('output.csv')
+print(data)
+
