@@ -6,9 +6,10 @@ url = ""
 #YYYYMMDDHHMMSS
 start = "20220223000000"
 end = "20220224000000"
+extension = ".csv"
 
 fname = ""
-filename = fname.join([airport,start]) 
+filename = fname.join([airport,start,extension]) 
 
 
 def buildUrl():

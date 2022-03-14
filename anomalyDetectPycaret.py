@@ -39,6 +39,6 @@ unseen_predictions.to_csv('FormattedData/results.csv')
 print(unseen_predictions)
 
 
-Plot results
-plot_model(saved_iforest, plot = '')
+#Plot results
+#plot_model(saved_iforest, plot = '')
 
