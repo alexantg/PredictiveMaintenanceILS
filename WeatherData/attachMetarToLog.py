@@ -16,6 +16,7 @@ with open("WeatherData/weatherReport.csv", 'rt', encoding="utf_8") as f:
 
     for row in logCSV:
         #weatherDate = str(metarCSV[p][0]) + " 00"
+        logDateFuture = str(logCSV[i+1][0]).replace("-"," ").replace(":"," ")
         logDate = str(logCSV[i][0]).replace("-"," ").replace(":"," ") + ","
         weatherValues = str(metarCSV[p][1] + "," + metarCSV[p][2] + "," + metarCSV[p][3] + "," + metarCSV[p][4])
         logValues = str(logCSV[i][1] + "," + logCSV[i][2] + "," + logCSV[i][3] + "," + logCSV[i][4] + "," + logCSV[i][5] + "," + logCSV[i][6] + "," + logCSV[i][7] + "," + logCSV[i][8] + ",")
@@ -23,7 +24,7 @@ with open("WeatherData/weatherReport.csv", 'rt', encoding="utf_8") as f:
 
         allValues = logDate + logValues + weatherValues + "\n"
         #weatherMinute = weatherDate.split()[5]
-        logMinute = logDate.split()[4]
+        logMinute = logDateFuture.split()[4]
         logMinute = int(logMinute)
 
         if(logMinute > 20 and logMinute < 50):
