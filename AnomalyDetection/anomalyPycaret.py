@@ -3,8 +3,8 @@ from pycaret.anomaly import *
 
 import pandas as pd
 
-data = pd.read_csv('AnomalyDetection/FormattedData/train.csv')
-data_unseen = pd.read_csv('AnomalyDetection/FormattedData/test.csv')
+data = pd.read_csv('FormattedData/train.csv')
+data_unseen = pd.read_csv('FormattedData/test.csv')
 
 data.reset_index(drop=True, inplace=True)
 data_unseen.reset_index(drop=True, inplace=True)
@@ -29,26 +29,28 @@ exp_ano101 = setup(data, normalize = True,
 
 
 #Create model: KNN
-knn = create_model('knn')
-knn_results = assign_model(knn)
-knn_results.head()
+#knn = create_model('knn')
+#knn_results = assign_model(knn)
+#knn_results.head()
 
 #Save model
-save_model(knn,'AnomalyDetection/Models/KNN100322CN_GP03')
+#save_model(knn,'AnomalyDetection/Models/KNN100322CN_GP03')
 
+
+saved_knn = load_model('SavedModels/KNN100322CN_GP03')
 
 #Load model
-#saved_iforest = load_model('IFOREST100322CN_GP03_new')
+#saved_iforest = load_model('SavedModels/IFOREST100322CN_GP03_new')
 
 
 #Predict on test data
-unseen_predictions = predict_model(knn, data=data_unseen)
+unseen_predictions = predict_model(saved_knn, data=data_unseen)
 unseen_predictions.head()
 
-unseen_predictions.to_csv('AnomalyDetection/FormattedData/resultsKNN.csv')
+unseen_predictions.to_csv('FormattedData/resultsIFOREST.csv')
 #print(unseen_predictions)
 
 
 #Plot results
-plot_model(knn, plot = 'umap')
+plot_model(saved_knn, plot = 'umap')
 
