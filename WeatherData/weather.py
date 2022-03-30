@@ -1,4 +1,4 @@
-import urllib.request as urllib2
+import urllib.request as urlRequest
 
 airport = "ENBO"
 url = ""
@@ -16,4 +16,4 @@ def buildUrl():
     urlDone = url.join(["http://www.ogimet.com/cgi-bin/getmetar?icao=", airport, "&begin=", start, "&end=", end, ""])
     return urlDone
 
-urllib2.urlretrieve(buildUrl(),  filename)
+urlRequest.urlretrieve(buildUrl(),  filename)
