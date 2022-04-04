@@ -1,6 +1,29 @@
 import csv
+from this import d
 import urllib.request as urlRequest
+import weatherDataToCSV
 i = 1
+def getMoreMetarData(date):
+    airport = "ENBO"
+    url = ""
+
+    #YYYYMMDDHHMMSS
+    start = date
+    begin = str(start)
+
+    end = start + 1000000
+    end = str(end)
+
+    fname = "weatherCSV.csv"
+    #filename = fname.join([airport,start,extension]) 
+
+
+    def buildUrl():
+        urlDone = url.join(["http://www.ogimet.com/cgi-bin/getmetar?icao=", airport, "&begin=", begin, "&end=", end, ""])
+        return urlDone
+
+    urlRequest.urlretrieve(buildUrl(),  fname)
+    weatherDataToCSV.getRelevantValues()
 
 def combineAndWrite():
     p = 1
@@ -23,6 +46,19 @@ def combineAndWrite():
         for row in logCSV:
 
             logDate = str(logCSV[x][0]).replace("-"," ").replace(":"," ") + ","
+
+            if(p == 49 or x == 1):
+                initialDate = logDate.replace(",","").split(" ")
+                dateMinute = int(initialDate[4])
+                if (dateMinute > 20):
+                    dateMinute = 50
+                else:
+                    dateMinute = 20
+                finalDate = (initialDate[0]) + (initialDate[1]) + (initialDate[2]) + (initialDate[3]) + str(dateMinute) + "00"
+                finalDate = int(finalDate)
+                print(finalDate)
+                getMoreMetarData(finalDate)
+
             weatherValues = str(metarCSV[p][1] + "," + metarCSV[p][2] + "," + metarCSV[p][3] + "," + metarCSV[p][4])
             logValues = str(logCSV[x][1] + "," + logCSV[x][2] + "," + logCSV[x][3] + "," + logCSV[x][4] + "," + logCSV[x][5] + "," + logCSV[x][6] + "," + logCSV[x][7] + "," + logCSV[x][8] + ",")
             #print(weatherValues)
@@ -33,8 +69,6 @@ def combineAndWrite():
             logMinute = int(logMinuteSec) + 500
             #print(logMinute)
 
-            if(p == 49):
-                getMoreMetarData()
 
             if(logMinute > 2000 and logMinute < 5000):
                 a = 1
@@ -55,22 +89,3 @@ def combineAndWrite():
     logFile.close()
 
 combineAndWrite()
-
-
-def getMoreMetarData():
-    airport = "ENBO"
-    url = ""
-
-    #YYYYMMDDHHMMSS
-    start = "20220223000000"
-    end = start +  "1000000"
-
-    fname = "weatherCSV.csv"
-    #filename = fname.join([airport,start,extension]) 
-
-
-    def buildUrl():
-        urlDone = url.join(["http://www.ogimet.com/cgi-bin/getmetar?icao=", airport, "&begin=", start, "&end=", end, ""])
-        return urlDone
-
-    urlRequest.urlretrieve(buildUrl(),  fname)
