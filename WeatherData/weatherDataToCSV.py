@@ -1,16 +1,17 @@
 import csv
 import re
-i = 0
+
 
 def getRelevantValues():
+    i = 0
     with open("WeatherData/weatherCSV.csv", 'rt', encoding="utf_8") as f:
-        mycsv = csv.reader(f)
-        mycsv = list(mycsv)
-        testFile = open('WeatherData/weatherReport.csv', 'w')
-        testFile.write("DATO," + "TEMP1," + "TEMP2," + "TRYKK," + "SIKT" + "\n")
-        for row in mycsv:
+        weatherCSV = csv.reader(f)
+        weatherCSV = list(weatherCSV)
+        weatherReport = open('WeatherData/weatherReport.csv', 'w')
+        weatherReport.write("DATO," + "TEMP1," + "TEMP2," + "TRYKK," + "SIKT" + "\n")
+        for row in weatherCSV:
 
-            text = str(mycsv[i]).replace(",", "").replace("'", "")
+            text = str(weatherCSV[i]).replace(",", "").replace("'", "")
 
             line = ((re.search("\d{4}\s\d{2}\s\d{2}\s\d{2}\s\d{2}", text)).group() + ","
             
@@ -20,8 +21,8 @@ def getRelevantValues():
 
             + (re.findall(r"\s[\d]{4}\s", text))[1].replace(",","").replace(" ", "") + "\n")
 
-            testFile.write(line)
-            #testFile.write(text + "\n")
+            weatherReport.write(line)
+            #weatherReport.write(text + "\n")
             i = i+1
 
-    testFile.close()
+    weatherReport.close()

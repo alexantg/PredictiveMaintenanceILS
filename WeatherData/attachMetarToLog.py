@@ -14,7 +14,7 @@ def getMoreMetarData(date):
     end = start + 1000000
     end = str(end)
 
-    fname = "weatherCSV.csv"
+    fname = "WeatherData/weatherCSV.csv"
     #filename = fname.join([airport,start,extension]) 
 
 
@@ -48,6 +48,7 @@ def combineAndWrite():
             logDate = str(logCSV[x][0]).replace("-"," ").replace(":"," ") + ","
 
             if(p == 49 or x == 1):
+                p = 0
                 initialDate = logDate.replace(",","").split(" ")
                 dateMinute = int(initialDate[4])
                 if (dateMinute > 20):
@@ -56,7 +57,7 @@ def combineAndWrite():
                     dateMinute = 20
                 finalDate = (initialDate[0]) + (initialDate[1]) + (initialDate[2]) + (initialDate[3]) + str(dateMinute) + "00"
                 finalDate = int(finalDate)
-                print(finalDate)
+                #print(finalDate)
                 getMoreMetarData(finalDate)
 
             weatherValues = str(metarCSV[p][1] + "," + metarCSV[p][2] + "," + metarCSV[p][3] + "," + metarCSV[p][4])
