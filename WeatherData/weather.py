@@ -4,8 +4,8 @@ airport = "ENBO"
 url = ""
 
 #YYYYMMDDHHMMSS
-start = "20220223000000"
-end = "20220224000000"
+start = "20220132155000"
+end = "20220132155000"
 extension = ".csv"
 
 fname = ""

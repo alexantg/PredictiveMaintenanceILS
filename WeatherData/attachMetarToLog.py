@@ -2,17 +2,18 @@ import csv
 from this import d
 import urllib.request as urlRequest
 import weatherDataToCSV
+import datetime
 i = 1
-def getMoreMetarData(date):
+def getMoreMetarData(dateStart, minute):
     airport = "ENBO"
     url = ""
 
     #YYYYMMDDHHMMSS
-    start = date
+    start = dateStart
     begin = str(start)
 
-    end = start + 1000000
-    end = str(end)
+    #end = start + 1000000
+    #end = str(end)
 
     fname = "WeatherData/weatherCSV.csv"
     #filename = fname.join([airport,start,extension]) 
@@ -39,9 +40,9 @@ def combineAndWrite():
         logRead = open('AnomalyDetection/FormattedData/train.csv', 'rt')
         logCSV = csv.reader(logRead)
         logCSV = list(logCSV)
-        metarNoDate = metarCSV[0]
-        metarNoDate.remove("DATO")
-        logFile.write(str(logCSV[0]).replace("[", "").replace("]", "") + "," + str(metarNoDate).replace("[", "").replace("]", "") + "\n")
+        #metarNoDate = metarCSV[0]
+        #metarNoDate.remove("DATO")
+        #logFile.write(str(logCSV[0]).replace("[", "").replace("]", "") + "," + str(metarNoDate).replace("[", "").replace("]", "") + "\n")
 
         for row in logCSV:
 
@@ -55,10 +56,10 @@ def combineAndWrite():
                     dateMinute = 50
                 else:
                     dateMinute = 20
-                finalDate = (initialDate[0]) + (initialDate[1]) + (initialDate[2]) + (initialDate[3]) + str(dateMinute) + "00"
-                finalDate = int(finalDate)
+                #finalDate = (initialDate[0]) + (initialDate[1]) + (initialDate[2]) + (initialDate[3]) + str(dateMinute) + "00"
+                #finalDate = int(finalDate)
                 #print(finalDate)
-                getMoreMetarData(finalDate)
+                getMoreMetarData(initialDate, dateMinute)
 
             weatherValues = str(metarCSV[p][1] + "," + metarCSV[p][2] + "," + metarCSV[p][3] + "," + metarCSV[p][4])
             logValues = str(logCSV[x][1] + "," + logCSV[x][2] + "," + logCSV[x][3] + "," + logCSV[x][4] + "," + logCSV[x][5] + "," + logCSV[x][6] + "," + logCSV[x][7] + "," + logCSV[x][8] + ",")

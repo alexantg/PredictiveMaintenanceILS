@@ -1,6 +1,11 @@
 import csv
 import re
 
+def checkVisibility(text):
+    if(len(re.findall(r"\s[\d]{4}\s", text))) >= 2:
+        return (re.findall(r"\s[\d]{4}\s", text))[1].replace(",","").replace(" ", "") + "\n"
+    elif(re.search("CAVOK", text) != None):
+        return "9999\n"
 
 def getRelevantValues():
     i = 0
@@ -19,10 +24,12 @@ def getRelevantValues():
 
             + (re.search("Q\d\d\d\d", text)).group().replace("Q","") + ","
 
-            + (re.findall(r"\s[\d]{4}\s", text))[1].replace(",","").replace(" ", "") + "\n")
+            + checkVisibility(text))
 
             weatherReport.write(line)
             #weatherReport.write(text + "\n")
             i = i+1
 
     weatherReport.close()
+
+
