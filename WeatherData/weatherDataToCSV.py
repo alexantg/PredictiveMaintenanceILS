@@ -13,7 +13,7 @@ def getRelevantValues():
         weatherCSV = csv.reader(f)
         weatherCSV = list(weatherCSV)
         weatherReport = open('WeatherData/weatherReport.csv', 'w')
-        weatherReport.write("DATO," + "TEMP1," + "TEMP2," + "TRYKK," + "SIKT" + "\n")
+        #weatherReport.write("DATO," + "TEMP1," + "TEMP2," + "TRYKK," + "SIKT" + "\n")
         for row in weatherCSV:
 
             text = str(weatherCSV[i]).replace(",", "").replace("'", "")

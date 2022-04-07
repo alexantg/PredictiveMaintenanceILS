@@ -9,11 +9,10 @@ def getMoreMetarData(dateStart, minute):
     url = ""
 
     #YYYYMMDDHHMMSS
-    start = dateStart
-    begin = str(start)
-
-    #end = start + 1000000
-    #end = str(end)
+    begin = (dateStart[0]) + (dateStart[1]) + (dateStart[2]) + (dateStart[3]) + str(minute) + "00"
+    dateBegin = datetime.datetime(int(dateStart[0]), int(dateStart[1]), int(dateStart[2]), int(dateStart[3]), minute, 00)
+    end = dateBegin + datetime.timedelta(days=1)
+    end = (str(end)).replace("-", "").replace(":","").replace(" ","")
 
     fname = "WeatherData/weatherCSV.csv"
     #filename = fname.join([airport,start,extension]) 
@@ -27,7 +26,7 @@ def getMoreMetarData(dateStart, minute):
     weatherDataToCSV.getRelevantValues()
 
 def combineAndWrite():
-    p = 1
+    p = 0
     a = 0
     b = 0
     x = i
@@ -35,12 +34,12 @@ def combineAndWrite():
     logFile = open('AnomalyDetection/FormattedData/trainTest.csv', 'a')
 
     with open("WeatherData/weatherReport.csv", 'rt', encoding="utf_8") as f:
-        metarCSV = csv.reader(f)
-        metarCSV = list(metarCSV)
+        weatherReport = csv.reader(f)
+        weatherReport = list(weatherReport)
         logRead = open('AnomalyDetection/FormattedData/train.csv', 'rt')
         logCSV = csv.reader(logRead)
         logCSV = list(logCSV)
-        #metarNoDate = metarCSV[0]
+        #metarNoDate = weatherReport[0]
         #metarNoDate.remove("DATO")
         #logFile.write(str(logCSV[0]).replace("[", "").replace("]", "") + "," + str(metarNoDate).replace("[", "").replace("]", "") + "\n")
 
@@ -61,7 +60,7 @@ def combineAndWrite():
                 #print(finalDate)
                 getMoreMetarData(initialDate, dateMinute)
 
-            weatherValues = str(metarCSV[p][1] + "," + metarCSV[p][2] + "," + metarCSV[p][3] + "," + metarCSV[p][4])
+            weatherValues = str(weatherReport[p][1] + "," + weatherReport[p][2] + "," + weatherReport[p][3] + "," + weatherReport[p][4])
             logValues = str(logCSV[x][1] + "," + logCSV[x][2] + "," + logCSV[x][3] + "," + logCSV[x][4] + "," + logCSV[x][5] + "," + logCSV[x][6] + "," + logCSV[x][7] + "," + logCSV[x][8] + ",")
             #print(weatherValues)
 
