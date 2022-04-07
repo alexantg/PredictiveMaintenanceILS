@@ -1,5 +1,4 @@
 import csv
-from this import d
 import urllib.request as urlRequest
 import weatherDataToCSV
 import datetime
@@ -71,14 +70,14 @@ def combineAndWrite():
             #print(logMinute)
 
 
-            if(logMinute > 2000 and logMinute < 5000):
+            if(logMinute >= 2000 and logMinute < 5000):
                 a = 1
                 if(a + b == 2):
                     p = p+1
                 b = 0
                 logFile.write(allValues)
 
-            if((logMinute > 0 and logMinute < 2000) or logMinute > 5000):
+            if((logMinute >= 0 and logMinute < 2000) or logMinute >= 5000):
                 b = 1
                 if(a + b == 2):
                     p = p+1
