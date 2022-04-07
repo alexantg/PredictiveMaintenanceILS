@@ -1,8 +1,45 @@
 import csv
 import urllib.request as urlRequest
-import weatherDataToCSV
+#import weatherDataToCSV
 import datetime
+import re
 i = 1
+
+#========================================================================================================================================================================
+
+def checkVisibility(text):
+    if(len(re.findall(r"\s[\d]{4}\s", text))) >= 2:
+        return (re.findall(r"\s[\d]{4}\s", text))[1].replace(",","").replace(" ", "") + "\n"
+    elif(re.search("CAVOK", text) != None):
+        return "9999\n"
+
+def getRelevantValues():
+    j = 0
+    with open("WeatherData/weatherCSV.csv", 'rt', encoding="utf_8") as f:
+        weatherCSV = csv.reader(f)
+        weatherCSV = list(weatherCSV)
+        weatherReport = open('WeatherData/weatherReport.csv', 'w')
+        weatherReport.write("DATO," + "TEMP1," + "TEMP2," + "TRYKK," + "SIKT" + "\n")
+        for row in weatherCSV:
+
+            text = str(weatherCSV[j]).replace(",", "").replace("'", "")
+
+            line = ((re.search("\d{4}\s\d{2}\s\d{2}\s\d{2}\s\d{2}", text)).group() + ","
+            
+            + (re.search("\d\d/\d\d|\D\d\d/\d\d|\d\d/\D\d\d|\D\d\d/\D\d\d", text)).group().replace(",","").replace("M", "-").replace("/", ",").replace(" ", "") + ","
+
+            + (re.search("Q\d\d\d\d", text)).group().replace("Q","") + ","
+
+            + checkVisibility(text))
+
+            weatherReport.write(line)
+            #weatherReport.write(text + "\n")
+            j = j+1
+
+    weatherReport.close()
+
+#========================================================================================================================================================================
+
 def getMoreMetarData(dateStart, minute):
     airport = "ENBO"
     url = ""
@@ -22,7 +59,15 @@ def getMoreMetarData(dateStart, minute):
         return urlDone
 
     urlRequest.urlretrieve(buildUrl(),  fname)
-    weatherDataToCSV.getRelevantValues()
+    getRelevantValues()
+
+#========================================================================================================================================================================
+
+##     ##       #      #####  ##    #
+# #   # #      # #       #    # #   #
+#  # #  #     #   #      #    #  #  #
+#   #   #    # ### #     #    #   # #
+#       #   #       #  #####  #    ##
 
 def combineAndWrite():
     p = 0
@@ -54,9 +99,7 @@ def combineAndWrite():
                     dateMinute = 50
                 else:
                     dateMinute = 20
-                #finalDate = (initialDate[0]) + (initialDate[1]) + (initialDate[2]) + (initialDate[3]) + str(dateMinute) + "00"
-                #finalDate = int(finalDate)
-                #print(finalDate)
+
                 getMoreMetarData(initialDate, dateMinute)
 
             weatherValues = str(weatherReport[p][1] + "," + weatherReport[p][2] + "," + weatherReport[p][3] + "," + weatherReport[p][4])
@@ -84,7 +127,7 @@ def combineAndWrite():
                 a = 0
                 logFile.write(allValues)
 
-            x=x+1
+            x = x + 1
 
     logFile.close()
 
