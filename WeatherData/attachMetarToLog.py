@@ -19,7 +19,7 @@ def getRelevantValues():
         weatherCSV = csv.reader(f)
         weatherCSV = list(weatherCSV)
         weatherReport = open('WeatherData/weatherReport.csv', 'w')
-        weatherReport.write("DATO," + "TEMP1," + "TEMP2," + "TRYKK," + "SIKT" + "\n")
+        #weatherReport.write("DATO," + "TEMP1," + "TEMP2," + "TRYKK," + "SIKT" + "\n")
         for row in weatherCSV:
 
             text = str(weatherCSV[j]).replace(",", "").replace("'", "")
@@ -59,7 +59,6 @@ def getMoreMetarData(dateStart, minute):
         return urlDone
 
     urlRequest.urlretrieve(buildUrl(),  fname)
-    getRelevantValues()
 
 #========================================================================================================================================================================
 
@@ -101,6 +100,10 @@ def combineAndWrite():
                     dateMinute = 20
 
                 getMoreMetarData(initialDate, dateMinute)
+                getRelevantValues()
+                with open("WeatherData/weatherReport.csv", 'rt', encoding="utf_8") as f:
+                    weatherReport = csv.reader(f)
+                    weatherReport = list(weatherReport)
 
             weatherValues = str(weatherReport[p][1] + "," + weatherReport[p][2] + "," + weatherReport[p][3] + "," + weatherReport[p][4])
             logValues = str(logCSV[x][1] + "," + logCSV[x][2] + "," + logCSV[x][3] + "," + logCSV[x][4] + "," + logCSV[x][5] + "," + logCSV[x][6] + "," + logCSV[x][7] + "," + logCSV[x][8] + ",")
