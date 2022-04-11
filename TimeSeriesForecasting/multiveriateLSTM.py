@@ -1,78 +1,167 @@
 
-import tensorflow as tf
-import os
+from os import sep
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+import tensorflow as tf
 
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import *
-from tensorflow.keras.callbacks import ModelCheckpoint
-from tensorflow.keras.losses import MeanSquaredError
-from tensorflow.keras.metrics import RootMeanSquaredError
-from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.models import load_model
+from sklearn.preprocessing import MinMaxScaler
 
+from sklearn.metrics import mean_absolute_error
 
-#gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction = 0.33)
-#sess = tf.Session(config= tf.ConfigProto(gpu_options = gpu_options))
+df = pd.read_csv('FormattedData/train.csv', sep = ',' , header=0, parse_dates=['Timestamp'])
 
-#zip_path = tf.keras.utils.get_file(
-    #origin='https://storage.googleapis.com/tensorflow/tf-keras-datasets/jena_climate_2009_2016.csv.zip',
-   # fname='jena_climate_2009_2016.csv.zip',
-   # extract=True)
-#csv_path, _ = os.path.splitext(zip_path)
+#Format datetime
+df.index = pd.to_datetime(df['Timestamp'].astype('datetime64').astype(int), format='%Y-%m-%d %H:%M:%S')
 
-csv_path = "FormattedData/train.csv"
-df = pd.read_csv(csv_path)
+#Filling in null values
+df = df.replace('?', np.nan)
+df.isnull().sum()
 
+#replace null values
+#def fill_missing(values):
+    #one_day = 60*24
+    #for row in range(df.shape[0]):
+   #     for col in range(df.shape[1]):
+  #          if np.isnan(values[row][col]):
+ #               values[row,col] = values[row-one_day,col]
+#df = df.astype('float32')
+#fill_missing(df.values)
+#df.isnull().sum()
 
-#print(df)
-
-df = df[5::6]
-
-df.index = pd.to_datetime(df['Timestamp'], format='%Y-%m-%d %H:%M:%S')
-df[:26]
-
-temp = df['MON1 CL DDM (?A)']
-#temp.plot()
-
-def df_to_X_y(df, window_size=5):
-  df_as_np = df.to_numpy()
-  X = []
-  y = []
-  for i in range(len(df_as_np)-window_size):
-    row = [[a] for a in df_as_np[i:i+window_size]]
-    X.append(row)
-    label = df_as_np[i+window_size]
-    y.append(label)
-  return np.array(X), np.array(y)
-
-WINDOW_SIZE = 5
-X1, y1 = df_to_X_y(temp, WINDOW_SIZE)
-X1.shape, y1.shape
+daily_df = df.resample('D').sum()
+daily_df.head()
 
 
-X_train1, y_train1 = X1[:60000], y1[:60000]
-X_val1, y_val1 = X1[60000:65000], y1[60000:65000]
-X_test1, y_test1 = X1[65000:], y1[65000:]
-X_train1.shape, y_train1.shape, X_val1.shape, y_val1.shape, X_test1.shape, y_test1.shape
+#Train-test split. (2529)
+train_df, test_df = df[1:2529], df[2529:]
 
-model1 = Sequential()
-model1.add(InputLayer((5, 1)))
-model1.add(LSTM(64))
-model1.add(Dense(8, 'relu'))
-model1.add(Dense(1, 'linear'))
+#Scale values from -1 to 1
+train = train_df
+scalers = {}
 
-model1.summary()
+for i in train_df.columns:
+    scaler = MinMaxScaler(feature_range=(-1,1))
+    s_s = scaler.fit_transform(train[i].values.reshape(-1,1))
+    s_s = np.reshape(s_s, len(s_s))
+    scalers['scaler_' + i] = scaler
+    train[i] = s_s
 
-cp1 = ModelCheckpoint('model1/', save_best_only=True)
-model1.compile(loss=MeanSquaredError(), optimizer=Adam(learning_rate=0.0001), metrics=[RootMeanSquaredError()])
+test = test_df
+for i in train_df.columns:
+    scaler = scalers['scaler_' + i]
+    s_s = scaler.transform(test[i].values.reshape(-1,1))
+    s_s = np.reshape(s_s, len(s_s))
+    scalers['scaler_' + i] = scaler
+    test[i] =s_s
 
-model1.fit(X_train1, y_train1, validation_data=(X_val1, y_val1), epochs=10, callbacks=[cp1])
 
-model1 = load_model('model1/')
+#Convert series to samples
+def split_series (series, n_past, n_future):
+    #
+    #n_past => number of past observations
+    #
+    #n_future => number of future observations
+    #
+    #
+    X, y = list(), list()
+    for window_start in range(len(series)):
+        past_end = window_start + n_past
+        future_end = past_end + n_future
+        if future_end >len(series):
+            break
+        
+    # slicing the past and future parts of the window
+        past, future = series[window_start:past_end, :], series[past_end:future_end, :]
+        X.append(past)
+        y.append(future)
+    return np.array(X), np.array(y)
 
-train_predictions = model1.predict(X_train1).flatten()
-train_results = pd.DataFrame(data={'Train Predictions':train_predictions, 'Actuals':y_train1})
-print(train_results)
+n_past = 10
+n_future = 5
+n_features = 8
 
+X_train, y_train = split_series(train.values,n_past, n_future)
+#X_train = X_train.reshape((X_train.shape[0], X_train.shape[1],n_features))
+#y_train = y_train.reshape((y_train.shape[0], y_train.shape[1], n_features))
+X_test, y_test = split_series(test.values,n_past, n_future)
+#X_test = X_test.reshape((X_test.shape[0], X_test.shape[1],n_features))
+#y_test = y_test.reshape((y_test.shape[0], y_test.shape[1], n_features))
+
+
+# E1D1
+# n_features ==> no of features at each timestep in the data.
+#
+encoder_inputs = tf.keras.layers.Input(shape=(n_past, n_features))
+encoder_l1 = tf.keras.layers.LSTM(100, return_state=True)
+encoder_outputs1 = encoder_l1(encoder_inputs)
+encoder_states1 = encoder_outputs1[1:]
+#
+decoder_inputs = tf.keras.layers.RepeatVector(n_future)(encoder_outputs1[0])
+#
+decoder_l1 = tf.keras.layers.LSTM(100, return_sequences=True)(decoder_inputs,initial_state = encoder_states1)
+decoder_outputs1 = tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(n_features))(decoder_l1)
+#
+model_e1d1 = tf.keras.models.Model(encoder_inputs,decoder_outputs1)
+#
+#print(model_e1d1.summary())
+
+# E2D2
+# n_features ==> no of features at each timestep in the data.
+#
+encoder_inputs = tf.keras.layers.Input(shape=(n_past, n_features))
+encoder_l1 = tf.keras.layers.LSTM(100,return_sequences = True, return_state=True)
+encoder_outputs1 = encoder_l1(encoder_inputs)
+encoder_states1 = encoder_outputs1[1:]
+encoder_l2 = tf.keras.layers.LSTM(100, return_state=True)
+encoder_outputs2 = encoder_l2(encoder_outputs1[0])
+encoder_states2 = encoder_outputs2[1:]
+#
+decoder_inputs = tf.keras.layers.RepeatVector(n_future)(encoder_outputs2[0])
+#
+decoder_l1 = tf.keras.layers.LSTM(100, return_sequences=True)(decoder_inputs,initial_state = encoder_states1)
+decoder_l2 = tf.keras.layers.LSTM(100, return_sequences=True)(decoder_l1,initial_state = encoder_states2)
+decoder_outputs2 = tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(n_features))(decoder_l2)
+#
+model_e2d2 = tf.keras.models.Model(encoder_inputs,decoder_outputs2)
+#
+print(model_e2d2.summary())
+
+
+#Training models. Adam optimizer/Huber loss
+reduce_lr = tf.keras.callbacks.LearningRateScheduler(lambda x: 1e-3 * 0.90 ** x)
+model_e1d1.compile(optimizer=tf.keras.optimizers.Adam(), loss=tf.keras.losses.Huber())
+history_e1d1=model_e1d1.fit(X_train,y_train,epochs=25,validation_data=(X_test,y_test),batch_size=32,verbose=0,callbacks=[reduce_lr])
+model_e2d2.compile(optimizer=tf.keras.optimizers.Adam(), loss=tf.keras.losses.Huber())
+history_e2d2=model_e2d2.fit(X_train,y_train,epochs=25,validation_data=(X_test,y_test),batch_size=32,verbose=0,callbacks=[reduce_lr])
+
+
+#Predict on test samples
+pred_e1d1=model_e1d1.predict(X_test)
+pred_e2d2=model_e2d2.predict(X_test)
+
+print(pred_e1d1)
+
+
+#Reverse scale values
+for index,i in enumerate(train_df.columns):
+    scaler = scalers['scaler_'+i]
+    #pred1_e1d1[:,:,index]=scaler.inverse_transform(pred1_e1d1[:,:,index])
+    pred_e1d1[:,:,index]=scaler.inverse_transform(pred_e1d1[:,:,index])
+    #pred1_e2d2[:,:,index]=scaler.inverse_transform(pred1_e2d2[:,:,index])
+    pred_e2d2[:,:,index]=scaler.inverse_transform(pred_e2d2[:,:,index])
+    y_train[:,:,index]=scaler.inverse_transform(y_train[:,:,index])
+    y_test[:,:,index]=scaler.inverse_transform(y_test[:,:,index])
+
+
+for index,i in enumerate(train_df.columns):
+  print(i)
+  for j in range(1,6):
+    print("Value",j,":")
+    print("MAE-E1D1 : ",mean_absolute_error(y_test[:,j-1,index],pred_e1d1[:,j-1,index]),end=", ")
+    print("MAE-E2D2 : ",mean_absolute_error(y_test[:,j-1,index],pred_e2d2[:,j-1,index]))
+  print()
+  print()
+
+  f = open("pred.csv", "w")
+  f.write(pred_e1d1)
