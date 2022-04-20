@@ -37,14 +37,14 @@ exp_ano101 = setup(data, normalize = True,
 #save_model(knn,'AnomalyDetection/Models/KNN100322CN_GP03')
 
 
-saved_knn = load_model('SavedModels/KNN100322CN_GP03')
+#saved_knn = load_model('SavedModels/KNN100322CN_GP03')
 
 #Load model
-#saved_iforest = load_model('SavedModels/IFOREST100322CN_GP03_new')
+saved_iforest = load_model('SavedModels/IFOREST100322CN_GP03_new')
 
 
 #Predict on test data
-unseen_predictions = predict_model(saved_knn, data=data_unseen)
+unseen_predictions = predict_model(saved_iforest, data=data_unseen)
 unseen_predictions.head()
 
 unseen_predictions.to_csv('FormattedData/resultsIFOREST.csv')
@@ -52,5 +52,5 @@ unseen_predictions.to_csv('FormattedData/resultsIFOREST.csv')
 
 
 #Plot results
-plot_model(saved_knn, plot = 'umap')
+plot_model(saved_iforest, plot = 'umap')
 

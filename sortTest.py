@@ -11,7 +11,7 @@ i = 0
 with open("FormattedData/logTestClean.csv", 'rt', encoding="utf_8") as f:
     mycsv = csv.reader(f)
     mycsv = list(mycsv)
-    testFile = open('FormattedData/testWoTime.csv', 'w')
+    testFile = open('FormattedData/train.csv', 'w')
     for row in mycsv:
         if i ==0:
              text = "\n" +  (mycsv[i][columns[0]]) +   ","  + (mycsv[i][columns[1]])+   ","+ (mycsv[i][columns[2]])+   ","+ (mycsv[i][columns[3]])+   ","+ (mycsv[i][columns[4]])+   ","+ (mycsv[i][columns[5]])+   ","+ (mycsv[i][columns[6]])+   ","+ (mycsv[i][columns[7]])+   ","+ (mycsv[i][columns[8]])
@@ -23,5 +23,3 @@ with open("FormattedData/logTestClean.csv", 'rt', encoding="utf_8") as f:
         #print(text)
 
 testFile.close()
-
-
