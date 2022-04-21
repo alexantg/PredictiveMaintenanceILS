@@ -19,14 +19,14 @@ def getRelevantValues():
         weatherCSV = csv.reader(f)
         weatherCSV = list(weatherCSV)
         weatherReport = open('WeatherData/weatherReport.csv', 'w')
-        #weatherReport.write("DATO," + "TEMP1," + "TEMP2," + "TRYKK," + "SIKT" + "\n")
+        #weatherReport.write("DATO," + "TEMP1," + "TEMP2," + "TRYKK," + "SIKT" + "\n") #DATO,TEMP1,TEMP2,TRYKK,SIKT
         for row in weatherCSV:
 
             text = str(weatherCSV[j]).replace(",", "").replace("'", "")
 
             line = ((re.search("\d{4}\s\d{2}\s\d{2}\s\d{2}\s\d{2}", text)).group() + ","
             
-            + (re.search("\d\d/\d\d|\D\d\d/\d\d|\d\d/\D\d\d|\D\d\d/\D\d\d", text)).group().replace(",","").replace("M", "-").replace("/", ",").replace(" ", "") + ","
+            + (re.search("\s\d\d/\d\d\s|\s\D\d\d/\d\d\s|\s\d\d/\D\d\d\s|\s\D\d\d/\D\d\d\s", text)).group().replace(",","").replace("M", "-").replace("/", ",").replace(" ", "") + ","
 
             + (re.search("Q\d\d\d\d", text)).group().replace("Q","") + ","
 
@@ -68,6 +68,8 @@ def getMoreMetarData(dateStart, minute):
 #   #   #   # ### #     #    #   # #
 #       #  #       #  #####  #    ##
 
+#Hvis vi vet standardverdier og alarmverdier, kan vi lage logikk som varsler når verdier er nærmere alarmverdi enn standardverdi
+
 def combineAndWrite():
     p = 0
     a = 0
@@ -89,6 +91,7 @@ def combineAndWrite():
         for row in logCSV:
 
             logDate = str(logCSV[x][0]).replace("-"," ").replace(":"," ") + ","
+            logDateTime = str(logCSV[x][0]) + ","
 
             if(p == 49 or x == 1):
                 p = 0
@@ -109,7 +112,7 @@ def combineAndWrite():
             logValues = str(logCSV[x][1] + "," + logCSV[x][2] + "," + logCSV[x][3] + "," + logCSV[x][4] + "," + logCSV[x][5] + "," + logCSV[x][6] + "," + logCSV[x][7] + "," + logCSV[x][8] + ",")
             #print(weatherValues)
 
-            allValues = logDate + logValues + weatherValues + "\n"
+            allValues = logDateTime + logValues + weatherValues + "\n"
             logMinuteSec = logDate.split()[4] + logDate.split()[5].replace(",","")
             logMinute = str(logMinuteSec)
             logMinute = int(logMinuteSec) + 500
