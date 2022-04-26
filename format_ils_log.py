@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-with open('/home/alexantg/home/ils/AnomalyDetection/RawData/ContMon 2022-02-09_ENSG GP24.csv', 'r') as inp:
+with open('/home/alexantg/test/AnomalyDetection/RawData/ContMon 2022-01-28_CN_GP21.csv', 'r') as inp:
     lines = inp.readlines()
 
 i = 0

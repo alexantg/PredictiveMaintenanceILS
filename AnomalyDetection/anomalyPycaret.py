@@ -40,7 +40,8 @@ exp_ano101 = setup(data, normalize = True,
 #saved_knn = load_model('SavedModels/KNN100322CN_GP03')
 
 #Load model
-saved_iforest = load_model('SavedModels/IFOREST100322CN_GP03_new')
+saved_iforest = load_model('AnomalyDetection/SavedModels/IFOREST100322CN_GP03_new')
+
 
 
 #Predict on test data
