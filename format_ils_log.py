@@ -16,7 +16,3 @@ with open('temp.csv', 'w') as out:
 
         i = i+1
 
-#drop empty columns
-##data = pd.read_csv('temp.csv')
-#print(data)
-
