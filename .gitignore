@@ -127,4 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+<<<<<<< HEAD
 *.csv
+=======
+multiplePredict.py
+WeatherData/weatherReport.csv
+>>>>>>> b6e508c217e41d8ed9457a24bd3379b3e7b1298e
