@@ -37,7 +37,7 @@ def series_to_supervised(data, n_in=1, n_out=1, dropnan=True):
 	return agg
  
 # load dataset
-dataset = read_csv('AnomalyDetection/FormattedData/train.csv', header=0, index_col=0)
+dataset = read_csv('AnomalyDetection/FormattedData/trainTest.csv', header=0, index_col=0)
 values = dataset.values
 # integer encode direction
 encoder = LabelEncoder()
@@ -50,8 +50,8 @@ scaled = scaler.fit_transform(values)
 # frame as supervised learning
 reframed = series_to_supervised(scaled, 1, 1)
 # drop columns we don't want to predict
-#reframed.drop(reframed.columns[[9,10,11,12,13,14,15]], axis=1, inplace=True)
-#print(reframed.head())
+reframed.drop(reframed.columns[[1]], axis=1, inplace=True)
+print(reframed.head())
  
 # split into train and test sets
 values = reframed.values
