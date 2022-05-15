@@ -68,7 +68,6 @@ def getMoreMetarData(dateStart, minute):
 #   #   #   # ### #     #    #   # #
 #       #  #       #  #####  #    ##
 
-#Hvis vi vet standardverdier og alarmverdier, kan vi lage logikk som varsler når verdier er nærmere alarmverdi enn standardverdi
 
 def combineAndWrite():
     p = 0
