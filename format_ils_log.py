@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-with open('/home/alexantg/test/AnomalyDetection/RawData/ContMon 2022-01-28_CN_GP21.csv', 'r') as inp:
+with open('/home/alexantg/test/TimeSeriesForecasting/RawData/ContMon 2022-02-09_CN_GP21.csv', 'r') as inp:
     lines = inp.readlines()
 
 i = 0
@@ -11,7 +11,7 @@ with open('temp.csv', 'w') as out:
         if i ==0:
                 out.write(line)
         else:
-            if not '?' in line and not '#' in line:
+            if not '?' in line and '#' not in line:
                 out.write(line) 
 
         i = i+1
